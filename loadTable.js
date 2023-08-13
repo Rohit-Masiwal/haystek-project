@@ -1,10 +1,11 @@
-let page = 0;
-let data = 3;
+let page = 0; // this variable tells the current page number
+let data = 3; // this variable is configurable. it shows 'data' number of records on a page
 let jsonLength = 0;
 const JSONPATH = './data.json'
 
 function loadTable(text='next-page') {
-    console.log(text)
+
+    // logic for load/first refresh of website
     if(text === 'on-load') {
         fetch(JSONPATH)
             .then((response) => response.json())
@@ -13,39 +14,47 @@ function loadTable(text='next-page') {
                 jsonLength = jsonData.length;
 
                 let container = document.getElementById("container");
+                // renders table on first page
                 for (let i = 0; i < data; i++) {
                     renderTable(i, jsonData, container);
                 }
 
             });
     }
+    // logic for click of 'NEXT PERSON' button
     else {
         page += 1;
-        console.log(page);
+        console.log("Current page number: ", page);
+
+        // removing the tables of previous page
+        for (let i = 0; i < Math.min(data, jsonLength - (page - 1) * data); i++) {
+            let table = document.getElementById("" + i);
+            table.remove();
+        }
 
         fetch(JSONPATH)
             .then((response) => response.json())
             .then((jsonData) => {
 
                 const maxNumberOfPages = Math.ceil(jsonLength / data);
+
+                // logic to check if there are some entries left in data.json
                 if (page < maxNumberOfPages) {
                     let container = document.getElementById("container");
 
-                    const maxPeopleOnLastPage = Math.min(data * page + data, jsonLength);
-                    for (let i = data * page; i < maxPeopleOnLastPage; i++) {
+                    const maxIndex = Math.min(data * page + data, jsonLength);
+
+                    // renders table on every click of 'NEXT PERSON' button
+                    for (let i = data * page; i < maxIndex; i++) {
                         renderTable(i,jsonData,container);
                     }
                 } else {
                     alert("No More People!");
                 }
             });
-
-        for (let i = 0; i < Math.min(data, jsonLength - (page - 1) * data); i++) {
-            let table = document.getElementById("" + i);
-            table.remove();
-        }
     }
 
+    // logic for bottom text
     document.getElementById("para").innerHTML = text === 'on-load' ?
         "CURRENTLY " + data + " PEOPLE SHOWING" :
         (   jsonLength - page * data > 0 ?
@@ -53,6 +62,7 @@ function loadTable(text='next-page') {
             "NO MORE PEOPLE!"   );
 }
 
+// logic to render a table
 function renderTable(i, jsonData, container) {
     let table = document.createElement("table");
     table.id = "" + (i-data*page);

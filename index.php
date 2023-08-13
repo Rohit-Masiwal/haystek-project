@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="container" onload="loadTable('on-load')">
-    <script type="text/javascript" src="./script.js"></script>
+    <script type="text/javascript" src="loadTable.js"></script>
     <div>
         <?php
             echo '<h1 class="p1">';
